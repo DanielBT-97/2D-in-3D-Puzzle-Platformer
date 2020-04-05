@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Velocity does not work since when colliding with a ceiling the player goes flying forwards because of the collision calculations.
@@ -15,8 +13,7 @@ using UnityEngine;
 /// The problem now is that by rotating the pannel the player loses speed. Also when rotating more than -50º in the X-axis the speed gets inverted. The tempVerticalVelocity has an incorrect Z component i.g. UP = (0, 0.6, -0.8) tempVerticalVelocity = (0, -0.6, -0.8) when -0.8 should have been inverted as well.
 /// POSSIBLE SOLUTION: https://answers.unity.com/questions/193398/velocity-relative-to-local.html
 /// </summary>
-public class PlayerController : FreezableObject
-{
+public class PlayerController : FreezableObject {
 
     #region Public Variables
     //Inspector Component References
@@ -37,24 +34,21 @@ public class PlayerController : FreezableObject
     private Vector3 _cachedVelocity = Vector3.zero;
     private Vector3 _localCachedVelocity = Vector3.zero;
 
-    public float _horizontalVelocity, _verticalVelocity;
+    private bool _jump = true;
+    private Vector2 _movementInput = Vector2.zero;
     #endregion
 
     #region Unity Cycle
     private void Awake() {
         _gravity = new Vector3(0, -9.8f, 0);
-        _horizontalVelocity = 0f;
-        _verticalVelocity = 0f;
-        if(_maxFallVelocity > 0) _maxFallVelocity *= -1;
+        if (_maxFallVelocity > 0) _maxFallVelocity *= -1;
     }
 
-    void Start()
-    {
-       //Debug.Log(_targetPannel.up);
+    void Start() {
+        //Debug.Log(_targetPannel.up);
     }
 
-    protected override void Update()
-    {
+    protected override void Update() {
         base.Update();
 
         ManageGravityAndOrientation();
@@ -63,18 +57,18 @@ public class PlayerController : FreezableObject
 
         Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
         tempVel.x = desiredMovement.x * _transVelocity;
-        if(desiredMovement.y == 1) {
+        if (desiredMovement.y == 1) {
             tempVel.y = _jumpForce;
         }
-        if(tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
-        
+        if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
+
         _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
 
-        if(_isFrozen) {
+        if (_isFrozen) {
             _playerRigid.Sleep();
         }
     }
-    
+
     private void OnDestroy() {
         _gravity = new Vector3(0, -9.81f, 0);
     }
@@ -97,6 +91,14 @@ public class PlayerController : FreezableObject
         _cachedVelocity = Vector3.zero;
     }
 
+    public void MovementUpdate(Vector2 input2D) {
+        _movementInput = input2D;
+    }
+
+    public void JumpRequest() {
+        _jump = true;
+    }
+
     public void MovePosition(Vector3 distanceToMove) {
         //Move player to CurrentPos + distanceToMove
     }
@@ -104,14 +106,14 @@ public class PlayerController : FreezableObject
 
     #region Private Methods
     private void ManageGravityAndOrientation() {
-        if(_targetPannel != null) {
+        if (_targetPannel != null) {
             //_playersTrans.forward = _targetPannel.forward;
-            if(_playersTrans.rotation != _targetPannel.rotation) _playersTrans.rotation = _targetPannel.rotation;
+            if (_playersTrans.rotation != _targetPannel.rotation) _playersTrans.rotation = _targetPannel.rotation;
             //_gravity = (-_targetPannel.up) * 9.81f;
             _gravity = _targetPannel.TransformVector(new Vector3(0, -9.81f, 0));
         }
-        
-        if(_gravity != Physics.gravity) {
+
+        if (_gravity != Physics.gravity) {
             Physics.gravity = _gravity;
         }
     }
@@ -124,16 +126,19 @@ public class PlayerController : FreezableObject
     private Vector2 ManageMovementInputs() {
         Vector2 desiredMovement = Vector2.zero;
 
-        if(Input.GetKeyDown(KeyCode.A) || Input.GetKey(KeyCode.A)) {
-            ++desiredMovement.x;
+        if (Input.GetKeyDown(KeyCode.A) || Input.GetKey(KeyCode.A)) {
+            //++desiredMovement.x;
         }
-        if(Input.GetKeyDown(KeyCode.D) || Input.GetKey(KeyCode.D)) {
-            --desiredMovement.x;
+        if (Input.GetKeyDown(KeyCode.D) || Input.GetKey(KeyCode.D)) {
+            //--desiredMovement.x;
         }
 
-        if(Input.GetKeyDown(KeyCode.Space)) {
+        desiredMovement.x = _movementInput.x;
+
+        if (_jump) {
             //_playerRigid.AddForce(_playersTrans.up * _jumpForce, ForceMode.Impulse);
             desiredMovement.y = 1;
+            _jump = false;
         }
 
         return desiredMovement;
@@ -146,13 +151,6 @@ public class PlayerController : FreezableObject
     private Vector3 RestoreLocalSpeed() {
         return _playersTrans.TransformVector(_localCachedVelocity);
     }
-
-    private Vector3 RestoreVelocity() {
-        Vector3 newVelocity = Vector3.zero;
-        newVelocity = (_playersTrans.right * _horizontalVelocity) + (_playersTrans.up * _verticalVelocity);
-        //newVelocity *= 0.25f;
-        return newVelocity;
-    }
     #endregion
-    
+
 }
