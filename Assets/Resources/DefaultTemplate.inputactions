@@ -11,7 +11,7 @@
                     "id": "98dd0610-629c-41b9-ac54-4e42d6475616",
                     "expectedControlType": "Vector2",
                     "processors": "InvertVector2(invertY=false)",
-                    "interactions": "Hold"
+                    "interactions": ""
                 },
                 {
                     "name": "Look",
@@ -36,6 +36,14 @@
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Test",
+                    "type": "Button",
+                    "id": "9415adf7-c566-44ab-b48c-fc340c8178e1",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "Hold"
                 }
             ],
             "bindings": [
@@ -223,6 +231,17 @@
                     "processors": "",
                     "groups": "Gamepad",
                     "action": "Jump",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e13d4a64-37e9-4c74-8d1d-e0aa87515447",
+                    "path": "<Keyboard>/f",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Test",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

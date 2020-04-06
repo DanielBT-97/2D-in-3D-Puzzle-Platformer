@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// Velocity does not work since when colliding with a ceiling the player goes flying forwards because of the collision calculations.
@@ -95,8 +96,8 @@ public class PlayerController : FreezableObject {
         _movementInput = input2D;
     }
 
-    public void JumpRequest() {
-        _jump = true;
+    public void JumpRequest(UnityEngine.InputSystem.InputAction.CallbackContext context) {
+        if(context.performed) _jump = true;
     }
 
     public void MovePosition(Vector3 distanceToMove) {
