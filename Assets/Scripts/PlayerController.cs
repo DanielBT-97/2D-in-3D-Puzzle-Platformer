@@ -107,9 +107,7 @@ public class PlayerController : FreezableObject {
     #region Private Methods
     private void ManageGravityAndOrientation() {
         if (_targetPannel != null) {
-            //_playersTrans.forward = _targetPannel.forward;
             if (_playersTrans.rotation != _targetPannel.rotation) _playersTrans.rotation = _targetPannel.rotation;
-            //_gravity = (-_targetPannel.up) * 9.81f;
             _gravity = _targetPannel.TransformVector(new Vector3(0, -9.81f, 0));
         }
 
@@ -126,17 +124,9 @@ public class PlayerController : FreezableObject {
     private Vector2 ManageMovementInputs() {
         Vector2 desiredMovement = Vector2.zero;
 
-        if (Input.GetKeyDown(KeyCode.A) || Input.GetKey(KeyCode.A)) {
-            //++desiredMovement.x;
-        }
-        if (Input.GetKeyDown(KeyCode.D) || Input.GetKey(KeyCode.D)) {
-            //--desiredMovement.x;
-        }
-
         desiredMovement.x = _movementInput.x;
 
         if (_jump) {
-            //_playerRigid.AddForce(_playersTrans.up * _jumpForce, ForceMode.Impulse);
             desiredMovement.y = 1;
             _jump = false;
         }

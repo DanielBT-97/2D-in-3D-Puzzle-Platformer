@@ -5,10 +5,10 @@ using UnityEngine.InputSystem;
 
 public class InputActionsTest : MonoBehaviour
 {
-
     public PlayerInput _playerInput;
-    private InputActionAsset _actionAsset;
     public PlayerController _playerController;
+
+    private InputActionAsset _actionAsset;
 
     private void Awake() {
         _actionAsset = _playerInput.actions;
