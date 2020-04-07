@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
 
 public class InputActionsTest : MonoBehaviour
 {
@@ -19,6 +20,7 @@ public class InputActionsTest : MonoBehaviour
         _movementAction = _actionAsset.FindAction("Move");
         _jumpAction = _actionAsset.FindAction("Jump");
         _testAction = _actionAsset.FindAction("Test");
+        
     }
 
     private void OnEnable() {
@@ -30,6 +32,9 @@ public class InputActionsTest : MonoBehaviour
         //_movementAction.started += ActionDebug;
         //_movementAction.canceled += ActionDebug;
         //_movementAction.performed += ActionDebug;
+        InputSystem.onDeviceChange += DeviceChangeDebug;
+        InputSystem.onLayoutChange += SchemeLayoutChangeDebug;
+        InputUser.onChange += ControlSchemeChangedDebug;
     }
 
     private void OnDisable() {
@@ -40,10 +45,50 @@ public class InputActionsTest : MonoBehaviour
         //_movementAction.started -= ActionDebug;
         //_movementAction.canceled -= ActionDebug;
         //_movementAction.performed -= ActionDebug;
+        InputSystem.onDeviceChange -= DeviceChangeDebug;
+        InputSystem.onLayoutChange -= SchemeLayoutChangeDebug;
+        InputUser.onChange -= ControlSchemeChangedDebug;
     }
 
     private void SimpleDebug(InputAction.CallbackContext actionContext) {
         Debug.Log(actionContext.action.phase);
+    }
+
+    /// <summary>
+    /// This function is called when there is a change in the control schemes. 
+    ///     There can be 4 different changes, to diferenciate between them use the parameter "change"
+    ///     In this case we want to know when a control scheme has been changed, know which one (using the name of the control scheme specified in the InputAsset we created => "Gamepad")
+    ///     Execute an event to which UI scripts would be subscribed to, this way they can change the UI button representation accordingly
+    ///     !!! If only string representation for the control is needed you can simply use the Display Name of the device control (InputSystem Debugger has the list of controls with their respective info)    !!!
+    ///     !!! When a control scheme is changed it will automaticaly change the display from that point forwards                                                                                               !!! 
+    ///     !!! --> OFC this makes that already displayed info will not get updated so you might want to combine the event below PLUS the Display Name instead of changing sprites you only change a string     !!!
+    /// </summary>
+    /// <param name="user"></param>
+    /// <param name="change"></param>
+    /// <param name="device"></param>
+    private void ControlSchemeChangedDebug(InputUser user, InputUserChange change, InputDevice device) {
+        if (change == InputUserChange.ControlSchemeChanged) { 
+            Debug.Log("Device changed to: " + user.controlScheme.Value.name);
+            //Notify UI to change the sprites of the buttons on screen.
+            /*  Example of if to be done in the UI Manager
+            if (user.controlScheme.Value.name.Equals("Gamepad")) {
+                //Change sprites to Gamepad controls
+            }
+            else {
+                //Change sprites to Mouse&Keyboard controls
+            } 
+            */
+        }
+    }
+
+    private void DeviceChangeDebug(InputDevice device, InputDeviceChange deviceChange) {
+        Debug.Log("Device" + device);
+        Debug.Log("Device Change: " + deviceChange);
+    }
+
+    private void SchemeLayoutChangeDebug(string layout, InputControlLayoutChange layoutChange) {
+        Debug.Log("Layout" + layout);
+        Debug.Log("Layout Change: " + layoutChange);
     }
 
     /// <summary>
@@ -86,5 +131,6 @@ public class InputActionsTest : MonoBehaviour
     /// </summary>
     private void Update() {
         _playerController.MovementUpdate(_movementAction.ReadValue<Vector2>());
+        ;
     }
 }
