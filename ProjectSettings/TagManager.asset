@@ -44,6 +44,9 @@ TagManager:
   - name: Pannel
     uniqueID: 4007124061
     locked: 0
+  - name: ObjectsAndPlatforms
+    uniqueID: 3203278389
+    locked: 0
   - name: Player
     uniqueID: 1987073333
     locked: 0
