@@ -131,6 +131,13 @@ public class InputActionsTest : MonoBehaviour
     /// </summary>
     private void Update() {
         _playerController.MovementUpdate(_movementAction.ReadValue<Vector2>());
-        ;
+
+        if (Input.GetKeyDown(KeyCode.P)) {
+            PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.PannelEditFreeze);
+        }
+
+        if (Input.GetKeyDown(KeyCode.O)) {
+            PlayerStateManager.Instance.RestoreLastStateRequest();
+        }
     }
 }

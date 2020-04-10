@@ -16,17 +16,38 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class PlayerController : FreezableObject {
 
+    //Singleton
+    public static PlayerController _instance = null;
+    public static PlayerController Instance {
+        get { return _instance; }
+    }
+
     #region Public Variables
     //Inspector Component References
-    public Transform _targetPannel = null;
-    public Transform _playersTrans = null;
-    public Rigidbody _playerRigid = null;
-    public ParentingFollow _parentingScript = null;
+    [SerializeField] private Transform _targetPannel = null;
+    [SerializeField] private Transform _playersTrans = null;
+    [SerializeField] private Rigidbody _playerRigid = null;
+    [SerializeField] private ParentingFollow _parentingScript = null;
 
-    //
-    public float _transVelocity = 1f;
-    public float _jumpForce = 10f;  //Force applied when 
-    public float _maxFallVelocity = 5f; //Maximum Y Speed value when falling.
+    //Movement
+    [SerializeField] private float _transVelocity = 1f;
+    [SerializeField] private float _jumpForce = 10f;  //Force applied when 
+    [SerializeField] private float _maxFallVelocity = 5f; //Maximum Y Speed value when falling.
+    #endregion
+
+    #region Getters & Setters
+    public Transform TargetPannel { 
+        get { return _targetPannel; }
+        set { _targetPannel = value; }
+    }
+
+    public Transform PlayerTrans {
+        get { return _playersTrans; }
+    }
+
+    public Rigidbody PlayerRigid {
+        get { return _playerRigid; }
+    }
     #endregion
 
     #region Private Variables
@@ -41,6 +62,7 @@ public class PlayerController : FreezableObject {
 
     #region Unity Cycle
     private void Awake() {
+        _instance = this;
         _gravity = new Vector3(0, -9.8f, 0);
         if (_maxFallVelocity > 0) _maxFallVelocity *= -1;
     }
@@ -54,16 +76,16 @@ public class PlayerController : FreezableObject {
 
         ManageGravityAndOrientation();
 
-        Vector2 desiredMovement = ManageMovementInputs();
+        //Vector2 desiredMovement = ManageMovementInputs();
 
-        Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
-        tempVel.x = desiredMovement.x * _transVelocity;
-        if (desiredMovement.y == 1) {
-            tempVel.y = _jumpForce;
-        }
-        if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
+        //Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
+        //tempVel.x = desiredMovement.x * _transVelocity;
+        //if (desiredMovement.y == 1) {
+        //    tempVel.y = _jumpForce;
+        //}
+        //if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
 
-        _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+        //_playerRigid.velocity = _playersTrans.TransformVector(tempVel);
 
         if (_isFrozen) {
             _playerRigid.Sleep();
@@ -76,7 +98,21 @@ public class PlayerController : FreezableObject {
     #endregion
 
     #region API Methods
+    public void FreeMovementUpdate() {
+        Vector2 desiredMovement = ManageMovementInputs();
+
+        Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
+        tempVel.x = desiredMovement.x * _transVelocity;
+        if (desiredMovement.y == 1) {
+            tempVel.y = _jumpForce;
+        }
+        if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
+
+        _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+    }
+
     public override void Freeze() {
+        Debug.Log("FREEZE");
         base.Freeze();
 
         _cachedVelocity = _playerRigid.velocity;
@@ -85,6 +121,7 @@ public class PlayerController : FreezableObject {
     }
 
     public override void UnFreeze() {
+        Debug.Log("UNFREEZE");
         base.UnFreeze();
 
         _parentingScript.StopParenting();
