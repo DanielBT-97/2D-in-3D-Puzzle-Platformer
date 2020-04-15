@@ -124,10 +124,10 @@ public class PlayerController : FreezableObject {
 
         Vector3 tempVel = Vector3.zero;
         if (desiredMovement.x > 0) {
-            tempVel = _currentConnection._leftDoor.position - _playersTrans.position;
+            tempVel = _currentConnection._rightDoor.position - _playersTrans.position;
             //_playerRigid.MovePosition(_currentConnection._rightDoor.position);
         } else if (desiredMovement.x < 0) {
-            tempVel = _currentConnection._rightDoor.position - _playersTrans.position;
+            tempVel = _currentConnection._leftDoor.position - _playersTrans.position;
             //_playerRigid.MovePosition(_currentConnection._leftDoor.position);
         }
 
