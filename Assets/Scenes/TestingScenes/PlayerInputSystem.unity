@@ -1007,7 +1007,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &705377600
 Transform:
   m_ObjectHideFlags: 0
@@ -1121,9 +1121,12 @@ MonoBehaviour:
   _playersTrans: {fileID: 856317260}
   _playerRigid: {fileID: 856317261}
   _parentingScript: {fileID: 856317263}
-  _transVelocity: 1
+  _translationVelocity: 1
   _jumpForce: 5
   _maxFallVelocity: 3
+  _currentConnection:
+    _leftDoor: {fileID: 677734708}
+    _rightDoor: {fileID: 2145872692}
 --- !u!4 &856317260
 Transform:
   m_ObjectHideFlags: 0
@@ -1664,7 +1667,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1053535712
 Transform:
   m_ObjectHideFlags: 0

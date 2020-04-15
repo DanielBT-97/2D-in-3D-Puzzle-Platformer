@@ -135,9 +135,16 @@ public class InputActionsTest : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.P)) {
             PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.PannelEditFreeze);
         }
-
         if (Input.GetKeyDown(KeyCode.O)) {
             PlayerStateManager.Instance.RestoreLastStateRequest();
         }
+
+        if (Input.GetKeyDown(KeyCode.I)) {
+            PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.TransitionMovement);
+        }
+        if (Input.GetKeyDown(KeyCode.U)) {
+            PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.FreeMovement);
+        }
+
     }
 }

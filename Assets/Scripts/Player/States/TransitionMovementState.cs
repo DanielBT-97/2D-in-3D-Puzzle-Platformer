@@ -15,14 +15,17 @@ public class TransitionMovementState : IPlayerStateHandler
     }
 
     public void Enter() {
+        PlayerController.Instance.PlayerRigid.velocity = Vector3.zero;
+        PlayerController.Instance.PlayerRigid.useGravity = false;
         PlayerStateManager.Instance.OnTransitionModeEnter.Invoke();
     }
 
     public void Execute() {
-        throw new System.NotImplementedException();
+        PlayerController.Instance.TransitionMovementUpdate();
     }
 
     public void Exit() {
+        PlayerController.Instance.PlayerRigid.useGravity = true;
         PlayerStateManager.Instance.OnTransitionModeExit.Invoke();
     }
 }

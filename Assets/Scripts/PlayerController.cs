@@ -30,7 +30,7 @@ public class PlayerController : FreezableObject {
     [SerializeField] private ParentingFollow _parentingScript = null;
 
     //Movement
-    [SerializeField] private float _transVelocity = 1f;
+    [SerializeField] private float _translationVelocity = 1f;
     [SerializeField] private float _jumpForce = 10f;  //Force applied when 
     [SerializeField] private float _maxFallVelocity = 5f; //Maximum Y Speed value when falling.
     #endregion
@@ -58,6 +58,14 @@ public class PlayerController : FreezableObject {
 
     private bool _jump = true;
     private Vector2 _movementInput = Vector2.zero;
+
+    //Pannel Transition Temporal
+    [System.Serializable]
+    public struct DoorConnection {
+        public Transform _leftDoor, _rightDoor;
+    }
+
+    public DoorConnection _currentConnection;
     #endregion
 
     #region Unity Cycle
@@ -79,7 +87,7 @@ public class PlayerController : FreezableObject {
         //Vector2 desiredMovement = ManageMovementInputs();
 
         //Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
-        //tempVel.x = desiredMovement.x * _transVelocity;
+        //tempVel.x = desiredMovement.x * _translationVelocity;
         //if (desiredMovement.y == 1) {
         //    tempVel.y = _jumpForce;
         //}
@@ -102,13 +110,29 @@ public class PlayerController : FreezableObject {
         Vector2 desiredMovement = ManageMovementInputs();
 
         Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
-        tempVel.x = desiredMovement.x * _transVelocity;
+        tempVel.x = desiredMovement.x * _translationVelocity;
         if (desiredMovement.y == 1) {
             tempVel.y = _jumpForce;
         }
         if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
 
         _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+    }
+
+    public void TransitionMovementUpdate() {
+        Vector2 desiredMovement = ManageMovementInputs();
+
+        Vector3 tempVel = Vector3.zero;
+        if (desiredMovement.x > 0) {
+            tempVel = _currentConnection._leftDoor.position - _playersTrans.position;
+            //_playerRigid.MovePosition(_currentConnection._rightDoor.position);
+        } else if (desiredMovement.x < 0) {
+            tempVel = _currentConnection._rightDoor.position - _playersTrans.position;
+            //_playerRigid.MovePosition(_currentConnection._leftDoor.position);
+        }
+
+        
+        _playerRigid.velocity = tempVel.normalized * _translationVelocity;
     }
 
     public override void Freeze() {
@@ -150,6 +174,10 @@ public class PlayerController : FreezableObject {
         }
 
         if (_gravity != Physics.gravity) {
+            if (PlayerStateManager.Instance.GetCurrentPlayerState != PlayerStateManager.PlayerState.FreeMovement) { 
+                //_gravity = Vector3.zero;
+            }
+
             Physics.gravity = _gravity;
         }
     }
