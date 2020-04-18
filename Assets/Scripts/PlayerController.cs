@@ -30,7 +30,8 @@ public class PlayerController : FreezableObject {
     [SerializeField] private ParentingFollow _parentingScript = null;
 
     //Movement
-    [SerializeField] private float _translationVelocity = 1f;
+    [SerializeField] private float _movementSpeed = 1f;
+    [SerializeField] private float _transitionSpeed = 1f;
     [SerializeField] private float _jumpForce = 10f;  //Force applied when 
     [SerializeField] private float _maxFallVelocity = 5f; //Maximum Y Speed value when falling.
     #endregion
@@ -50,7 +51,11 @@ public class PlayerController : FreezableObject {
     }
 
     public float MovementSpeed {
-        get => _translationVelocity;
+        get => _movementSpeed;
+    }
+
+    public float TransitionSpeed {
+        get => _transitionSpeed;
     }
 
     public Vector2 MovementInput { 
@@ -95,7 +100,7 @@ public class PlayerController : FreezableObject {
         //Vector2 desiredMovement = ManageMovementInputs();
 
         //Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
-        //tempVel.x = desiredMovement.x * _translationVelocity;
+        //tempVel.x = desiredMovement.x * _movementSpeed;
         //if (desiredMovement.y == 1) {
         //    tempVel.y = _jumpForce;
         //}
@@ -118,7 +123,7 @@ public class PlayerController : FreezableObject {
         Vector2 desiredMovement = ManageMovementInputs();
 
         Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
-        tempVel.x = desiredMovement.x * _translationVelocity;
+        tempVel.x = desiredMovement.x * _movementSpeed;
         if (desiredMovement.y == 1) {
             tempVel.y = _jumpForce;
         }
@@ -129,7 +134,9 @@ public class PlayerController : FreezableObject {
 
     public void TransitionMovementUpdate() {
         Vector2 desiredMovement = ManageMovementInputs();
+        PlayerTransitionManager.Instance.TransitionModeMovement(desiredMovement);
 
+        /* //OLD TEST
         Vector3 tempVel = Vector3.zero;
         if (desiredMovement.x > 0) {
             tempVel = _currentConnection._rightDoor.position - _playersTrans.position;
@@ -139,8 +146,10 @@ public class PlayerController : FreezableObject {
             //_playerRigid.MovePosition(_currentConnection._leftDoor.position);
         }
 
-        
-        _playerRigid.velocity = tempVel.normalized * _translationVelocity;  //TODO: Try and use this same code but adapt for the use of a Lerp instead of a velocity. Also MovePosition works if kinematic.
+
+        _playerRigid.velocity = tempVel.normalized * _movementSpeed;  //TODO: Try and use this same code but adapt for the use of a Lerp instead of a velocity. Also MovePosition works if kinematic.
+        */
+
     }
 
     public void TransitionMovementUpdateTest() {
@@ -148,7 +157,7 @@ public class PlayerController : FreezableObject {
 
         Vector3 tempVel = PlayerTransitionManager.Instance.GetTargetPosition(desiredMovement).position - _playersTrans.position;
 
-        _playerRigid.velocity = tempVel.normalized * _translationVelocity;
+        _playerRigid.velocity = tempVel.normalized * _movementSpeed;
     }
 
     public override void Freeze() {

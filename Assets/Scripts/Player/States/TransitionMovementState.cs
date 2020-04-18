@@ -21,7 +21,7 @@ public class TransitionMovementState : IPlayerStateHandler
     }
 
     public void Execute() {
-        //PlayerController.Instance.TransitionMovementUpdate();
+        PlayerController.Instance.TransitionMovementUpdate();
     }
 
     public void Exit() {

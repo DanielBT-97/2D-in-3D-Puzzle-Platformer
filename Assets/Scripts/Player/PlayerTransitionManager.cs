@@ -74,25 +74,36 @@ public class PlayerTransitionManager : MonoBehaviour {
         else _forwardDirection = _doorEntered.GoesRight ? 1 : -1;
 
         Door nextDoor = _doorEntered.TargetDoor;
-        _path[0]._position = _doorEntered.DoorPosition.position;    //Maybe use the players position as the starting point?
+        Vector3 positionDifference = Vector3.zero;
+        if (_doorEntered.IsHorizontal) { //Right or Left
+            positionDifference.y = PlayerController.Instance.PlayerTrans.position.y - _doorEntered.DoorPosition.position.y;
+            //_path[0]._position = new Vector3(_doorEntered.DoorPosition.position.x, PlayerController.Instance.PlayerTrans.position.y, _doorEntered.DoorPosition.position.z);    //Maybe use the players position as the starting point?
+            //_path[1]._position = new Vector3(_doorEntered.OutsideDoorPosition.position.x, PlayerController.Instance.PlayerTrans.position.y, _doorEntered.OutsideDoorPosition.position.z);    //Maybe use the players position as the starting point?
+        } else { //Down or Up
+            //positionDifference.x = PlayerController.Instance.PlayerTrans.position.x - _doorEntered.OutsideDoorPosition.position.x;
+            //_path[0]._position = new Vector3(PlayerController.Instance.PlayerTrans.position.x, _doorEntered.DoorPosition.position.y, _doorEntered.DoorPosition.position.z);    //Maybe use the players position as the starting point?
+            //_path[1]._position = new Vector3(PlayerController.Instance.PlayerTrans.position.x, _doorEntered.OutsideDoorPosition.position.y, _doorEntered.OutsideDoorPosition.position.z);    //Maybe use the players position as the starting point?
+        }
+        _path[0]._position = _doorEntered.DoorPosition.position + positionDifference;
         _path[0]._rotation = _doorEntered.DoorPosition.rotation;    //Maybe use the players position as the starting point?
-        _path[0]._door = _doorEntered;    //Maybe use the players position as the starting point?
+        _path[0]._door = _doorEntered;
 
-        _path[1]._position = _doorEntered.OutsideDoorPosition.position;    //Maybe use the players position as the starting point?
+        _path[1]._position = _doorEntered.OutsideDoorPosition.position + positionDifference;
         _path[1]._rotation = _doorEntered.OutsideDoorPosition.rotation;    //Maybe use the players position as the starting point?
-        _path[1]._door = _doorEntered;    //Maybe use the players position as the starting point?
+        _path[1]._door = _doorEntered;
 
-        _path[2]._position = nextDoor.OutsideDoorPosition.position;
+        _path[2]._position = nextDoor.OutsideDoorPosition.position + positionDifference;
         _path[2]._rotation = nextDoor.OutsideDoorPosition.rotation;
         _path[2]._door = nextDoor;
 
-        _path[3]._position = nextDoor.DoorPosition.position;
+        _path[3]._position = nextDoor.DoorPosition.position + positionDifference;
         _path[3]._rotation = nextDoor.DoorPosition.rotation;
         _path[3]._door = nextDoor;
 
         _currentPosition = _path[0]._position;
         _nextPannel = nextDoor.GetPannel;
-        
+
+        _lerpValue = 0;
         _previousNode = 0;
         _nextNode = 1;
 
@@ -147,14 +158,31 @@ public class PlayerTransitionManager : MonoBehaviour {
 
     public Vector3 GetTargetPosition(int inputMovement) {
         float distance = Vector3.Distance(_path[_previousNode]._position, _path[_nextNode]._position);
-        float newSpeed = (distance / PlayerController.Instance.MovementSpeed);
-        _lerpValue += inputMovement * (Time.deltaTime / newSpeed);
+        float newSpeed = (distance / PlayerController.Instance.TransitionSpeed);
+        if(newSpeed != 0) _lerpValue += inputMovement * (Time.deltaTime / (newSpeed));
         Vector3 targetPosition = Vector3.Lerp(_path[_previousNode]._position, _path[_nextNode]._position, _lerpValue);
         return targetPosition;
     }
 
     public void DoorEntered(Door door) {
         _doorEntered = door;
+    }
+
+    public void TransitionModeMovement(Vector2 input) {
+        int desiredMovement = Mathf.RoundToInt(_doorEntered.IsHorizontal ? input.x : input.y);
+        
+        desiredMovement *= _forwardDirection;   //This makes sure that positive is always forward without being dependent of right or left.
+        if ((PlayerController.Instance.PlayerTrans.position != _path[_nextNode]._position && desiredMovement > 0) || (PlayerController.Instance.PlayerTrans.position != _path[_previousNode]._position && desiredMovement < 0) || desiredMovement == 0) {
+            _currentPosition = GetTargetPosition(desiredMovement);
+            PlayerController.Instance.PlayerTrans.position = _currentPosition;
+        } else {
+            if ((_nextNode < _path.Length - 1 && desiredMovement > 0) || (_previousNode > 0 && desiredMovement < 0)) {
+                NextNode(desiredMovement);
+            } else {
+                Debug.Log("END TRANSITION: DESIRED = " + desiredMovement + "Next Node = " + _nextNode + "Previous Node = " + _previousNode);
+                PlayerStateManager.Instance.RestoreLastStateRequest();
+            }
+        }
     }
     #endregion
 
@@ -163,7 +191,7 @@ public class PlayerTransitionManager : MonoBehaviour {
         _instance = this;
     }
 
-    private void Update() {
+    /*private void Update() {
         if (PlayerStateManager.Instance.GetCurrentPlayerState != PlayerStateManager.PlayerState.TransitionMovement) return;
 
         int desiredMovement = 0;
@@ -187,7 +215,7 @@ public class PlayerTransitionManager : MonoBehaviour {
                 PlayerStateManager.Instance.RestoreLastStateRequest();
             }
         }
-    }
+    }*/
     #endregion
 
     #region Courrutines
