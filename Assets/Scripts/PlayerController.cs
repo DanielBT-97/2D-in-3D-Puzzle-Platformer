@@ -37,16 +37,24 @@ public class PlayerController : FreezableObject {
 
     #region Getters & Setters
     public Transform TargetPannel { 
-        get { return _targetPannel; }
+        get =>_targetPannel;
         set { _targetPannel = value; }
     }
 
     public Transform PlayerTrans {
-        get { return _playersTrans; }
+        get => _playersTrans;
     }
 
     public Rigidbody PlayerRigid {
-        get { return _playerRigid; }
+        get => _playerRigid;
+    }
+
+    public float MovementSpeed {
+        get => _translationVelocity;
+    }
+
+    public Vector2 MovementInput { 
+        get => _movementInput;
     }
     #endregion
 
@@ -132,6 +140,14 @@ public class PlayerController : FreezableObject {
         }
 
         
+        _playerRigid.velocity = tempVel.normalized * _translationVelocity;  //TODO: Try and use this same code but adapt for the use of a Lerp instead of a velocity. Also MovePosition works if kinematic.
+    }
+
+    public void TransitionMovementUpdateTest() {
+        Vector2 desiredMovement = ManageMovementInputs();
+
+        Vector3 tempVel = PlayerTransitionManager.Instance.GetTargetPosition(desiredMovement).position - _playersTrans.position;
+
         _playerRigid.velocity = tempVel.normalized * _translationVelocity;
     }
 

@@ -7,7 +7,7 @@ public class TransitionMovementState : IPlayerStateHandler
     public bool EnterTransitionConditions(PlayerStateManager.PlayerState currentState) {
         bool canTransition = true;
 
-        if (currentState == PlayerStateManager.PlayerState.PannelEditFreeze) {
+        if (currentState == PlayerStateManager.PlayerState.PannelEditFreeze || currentState == PlayerStateManager.PlayerState.TransitionMovement) {
             canTransition = false;
         }
 
@@ -21,7 +21,7 @@ public class TransitionMovementState : IPlayerStateHandler
     }
 
     public void Execute() {
-        PlayerController.Instance.TransitionMovementUpdate();
+        //PlayerController.Instance.TransitionMovementUpdate();
     }
 
     public void Exit() {

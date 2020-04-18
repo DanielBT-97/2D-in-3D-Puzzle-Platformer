@@ -14,11 +14,11 @@ TagManager:
   - 
   - 
   - PostProcessing
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Door
+  - Platform
+  - Pannel
+  - PlayerChecker
   - 
   - 
   - 
