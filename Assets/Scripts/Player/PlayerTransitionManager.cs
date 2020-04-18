@@ -50,6 +50,16 @@ public class PlayerTransitionManager : MonoBehaviour {
         _previousNode += direction;
         _nextNode += direction;
     }
+
+    private float FindClosestLerpInPath(Vector3 playerPosition) {
+        float newLerp = 0f;
+
+        float totalDistance = Vector3.Distance(_path[_nextNode]._position, _path[_previousNode]._position);
+        float toPlayerDistance = Vector3.Distance(playerPosition, _path[_previousNode]._position);
+        newLerp = toPlayerDistance / totalDistance;
+
+        return newLerp;
+    }
     #endregion
 
     #region API Methods
@@ -64,8 +74,8 @@ public class PlayerTransitionManager : MonoBehaviour {
         else _forwardDirection = _doorEntered.GoesRight ? 1 : -1;
 
         Door nextDoor = _doorEntered.TargetDoor;
-        _path[0]._position = PlayerController.Instance.PlayerTrans.position;    //Maybe use the players position as the starting point?
-        _path[0]._rotation = PlayerController.Instance.PlayerTrans.rotation;    //Maybe use the players position as the starting point?
+        _path[0]._position = _doorEntered.DoorPosition.position;    //Maybe use the players position as the starting point?
+        _path[0]._rotation = _doorEntered.DoorPosition.rotation;    //Maybe use the players position as the starting point?
         _path[0]._door = _doorEntered;    //Maybe use the players position as the starting point?
 
         _path[1]._position = _doorEntered.OutsideDoorPosition.position;    //Maybe use the players position as the starting point?
@@ -82,10 +92,11 @@ public class PlayerTransitionManager : MonoBehaviour {
 
         _currentPosition = _path[0]._position;
         _nextPannel = nextDoor.GetPannel;
-        _lerpValue = 0;
+        
         _previousNode = 0;
         _nextNode = 1;
 
+        _lerpValue = Mathf.Clamp(FindClosestLerpInPath(PlayerController.Instance.PlayerTrans.position), 0, 1);
     }
 
     /*public void CreateNewPath(Door doorEntered) {
@@ -141,6 +152,10 @@ public class PlayerTransitionManager : MonoBehaviour {
         Vector3 targetPosition = Vector3.Lerp(_path[_previousNode]._position, _path[_nextNode]._position, _lerpValue);
         return targetPosition;
     }
+
+    public void DoorEntered(Door door) {
+        _doorEntered = door;
+    }
     #endregion
 
     #region Unity Cycle
@@ -172,10 +187,6 @@ public class PlayerTransitionManager : MonoBehaviour {
                 PlayerStateManager.Instance.RestoreLastStateRequest();
             }
         }
-    }
-
-    public void DoorEntered(Door door) {
-        _doorEntered = door;
     }
     #endregion
 
