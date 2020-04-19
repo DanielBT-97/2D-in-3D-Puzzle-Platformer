@@ -152,14 +152,6 @@ public class PlayerController : FreezableObject {
 
     }
 
-    public void TransitionMovementUpdateTest() {
-        Vector2 desiredMovement = ManageMovementInputs();
-
-        Vector3 tempVel = PlayerTransitionManager.Instance.GetTargetPosition(desiredMovement).position - _playersTrans.position;
-
-        _playerRigid.velocity = tempVel.normalized * _movementSpeed;
-    }
-
     public override void Freeze() {
         Debug.Log("FREEZE");
         base.Freeze();
