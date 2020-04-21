@@ -88,8 +88,8 @@ public class PlayerStateManager : MonoBehaviour {
         return changedState;
     }
 
-    public bool RestoreLastStateRequest() {
-        return ChangeStateRequest(_ePreviousPlayerState);
+    public bool RestoreLastStateRequest(bool forceChange = false) {
+        return ChangeStateRequest(_ePreviousPlayerState, forceChange);
     }
     #endregion
 

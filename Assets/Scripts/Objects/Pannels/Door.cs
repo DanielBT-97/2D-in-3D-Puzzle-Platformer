@@ -35,7 +35,16 @@ public class Door : MonoBehaviour
     public bool GoesRight { get => _goesRight; }
 
     private void OnTriggerEnter(Collider other) {
-        Debug.Log("TRIGGER");
+        //If this door is a ladder enter ladder mode. When door has a closed state a collider needs to exist instead of the triggers => Only enter ladder mode when pressing up or down.
+        if (!IsHorizontal) {
+            PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.LadderMovement);
+        }
         PlayerTransitionManager.Instance.DoorEntered(this);
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (!IsHorizontal && PlayerStateManager.Instance.GetCurrentPlayerState == PlayerStateManager.PlayerState.LadderMovement) {
+            PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.FreeMovement);
+        }
     }
 }

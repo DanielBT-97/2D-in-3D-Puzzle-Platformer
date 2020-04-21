@@ -39,7 +39,10 @@ public class PlayerController : FreezableObject {
     #region Getters & Setters
     public Transform TargetPannel { 
         get =>_targetPannel;
-        set { _targetPannel = value; }
+        set { 
+            _targetPannel = value;
+            _playersTrans.rotation = _targetPannel.rotation;
+        }
     }
 
     public Transform PlayerTrans {
@@ -132,8 +135,24 @@ public class PlayerController : FreezableObject {
         _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
     }
 
+    public void LadderMovementUpdate() {
+        Vector2 desiredMovement = _movementInput;
+        
+        Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
+        tempVel.x = desiredMovement.x * _movementSpeed * 0.25f;
+        tempVel.y = desiredMovement.y * _movementSpeed * 0.25f;
+
+        //Transform variation
+        //Vector3 xAxis = _playersTrans.right * desiredMovement.x * (Time.deltaTime * _movementSpeed * 0.25f);
+        //Vector3 yAxis = _playersTrans.up * desiredMovement.y * (Time.deltaTime * _movementSpeed * 0.25f);
+        //Vector3 newPos = _playersTrans.position + xAxis + yAxis;
+        //_playersTrans.position = newPos;
+
+        _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+    }
+
     public void TransitionMovementUpdate() {
-        Vector2 desiredMovement = ManageMovementInputs();
+        Vector2 desiredMovement = _movementInput;
         PlayerTransitionManager.Instance.TransitionModeMovement(desiredMovement);
 
         /* //OLD TEST
@@ -175,7 +194,7 @@ public class PlayerController : FreezableObject {
     }
 
     public void JumpRequest(UnityEngine.InputSystem.InputAction.CallbackContext context) {
-        if(context.performed) _jump = true;
+        if(context.performed && PlayerStateManager.Instance.GetCurrentPlayerState == PlayerStateManager.PlayerState.FreeMovement) _jump = true;
     }
 
     public void MovePosition(Vector3 distanceToMove) {
@@ -191,17 +210,12 @@ public class PlayerController : FreezableObject {
         }
 
         if (_gravity != Physics.gravity) {
-            if (PlayerStateManager.Instance.GetCurrentPlayerState != PlayerStateManager.PlayerState.FreeMovement) { 
-                //_gravity = Vector3.zero;
-            }
-
             Physics.gravity = _gravity;
         }
     }
 
     /// <summary>
     /// Manages the horizontal movement as well as the jump action.
-    /// TODO: USE new INPUT SYSTEM
     /// </summary>
     /// <returns></returns>
     private Vector2 ManageMovementInputs() {

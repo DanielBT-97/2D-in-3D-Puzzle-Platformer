@@ -71,6 +71,7 @@ public class PlayerTransitionManager : MonoBehaviour {
     [SerializeField] Door _doorEntered = null;  //Door entered. This is the door that starts the path.
     private Pannel _nextPannel = null;  //The pannel you will be entering.
     private int _forwardDirection = 1;  //This int should always be either 1 or -1. When activating the transition mode the player has to be pushing some direction that would be forward. This registers that.
+    private float _transitionSpeedMultiplier = 1f;
     #endregion
 
     #region Getters & Setters
@@ -89,6 +90,8 @@ public class PlayerTransitionManager : MonoBehaviour {
     /// </summary>
     /// <param name="direction">Direction we want to move. 1 == Forward | -1 == Backward</param>
     private void NextNode(int direction) {
+        int nodeReached = _previousNode + Mathf.RoundToInt(_lerpValue);
+        IntermediaryNodeReached(nodeReached, nodeReached + direction);
         _lerpValue = (direction == 1) ? 0 : 1;  //If going right (forwards) the next starting value should be 0 | If going left (backwards) the next starting value should be 1
         _previousNode += direction;
         _nextNode += direction;
@@ -119,10 +122,17 @@ public class PlayerTransitionManager : MonoBehaviour {
     /// <returns>New position for the player.</returns>
     private Vector3 GetTargetPosition(int inputMovement) {
         float distance = Vector3.Distance(_path[_previousNode]._position, _path[_nextNode]._position);
-        float newSpeed = (distance / PlayerController.Instance.TransitionSpeed);
+        float newSpeed = (distance / (PlayerController.Instance.TransitionSpeed * _transitionSpeedMultiplier));
         if (newSpeed != 0) _lerpValue += inputMovement * (Time.deltaTime / (newSpeed));
         Vector3 targetPosition = Vector3.Lerp(_path[_previousNode]._position, _path[_nextNode]._position, _lerpValue);
         return targetPosition;
+    }
+
+    private void IntermediaryNodeReached(int nodeReachedIndex, int targetNodeIndex) {
+        Debug.Log("NODE REACHED: " + nodeReachedIndex + "TARGET NODE: " + targetNodeIndex);
+        PlayerController.Instance.TargetPannel = _path[nodeReachedIndex]._door.GetPannel.transform;
+        _transitionSpeedMultiplier = (nodeReachedIndex + targetNodeIndex == 3) ? 2.5f : 1;    //sum == 3 is beacuse the indexes can only be adjacent and the result 3 is only possible if player is traveling between intermidiate nodes (1 and 2).
+        //TODO DANI: Use variable dependent of distance between intermediate nodes (1 and 2)
     }
     #endregion
 
@@ -137,6 +147,8 @@ public class PlayerTransitionManager : MonoBehaviour {
             Debug.LogError("New path has been requested by player but the door had no connection but still was opened. Something has gone wrong. Click this to see what door originated request.", _doorEntered.gameObject);
             return;
         }   //No next door assigned.
+
+        Debug.Log("CREATE PATH");
 
         //Registers which direction forward should be. If the door goes right 1 is forward if not the -1 is forward.
         //This makes it so that I don't need to differentiate between different doors when moving.
@@ -176,6 +188,7 @@ public class PlayerTransitionManager : MonoBehaviour {
         //_lerpValue = 0;
         _previousNode = 0;
         _nextNode = 1;
+        _transitionSpeedMultiplier = 1f;
 
         _lerpValue = Mathf.Clamp(FindClosestLerpInPath(PlayerController.Instance.PlayerTrans.position), 0, 1);
     }
@@ -195,7 +208,7 @@ public class PlayerTransitionManager : MonoBehaviour {
     /// </summary>
     /// <param name="input">This frame input.</param>
     public void TransitionModeMovement(Vector2 input) {
-        int desiredMovement = Mathf.RoundToInt(_doorEntered.IsHorizontal ? input.x : input.y);
+        int desiredMovement = Mathf.RoundToInt(_path[0]._door.IsHorizontal ? input.x : input.y);
         
         desiredMovement *= _forwardDirection;   //This makes sure that positive is always forward without being dependent of right or left input.
 
@@ -208,8 +221,8 @@ public class PlayerTransitionManager : MonoBehaviour {
             if ((_nextNode < _path.Length - 1 && desiredMovement > 0) || (_previousNode > 0 && desiredMovement < 0)) {
                 NextNode(desiredMovement);
             } else { //If want to move to next set of nodes BUT at the end of either sides of the path revert to previous player state (FreeMovement || LadderMovement) => END OF TRANSITION MODE
-                //Debug.Log("END TRANSITION: DESIRED = " + desiredMovement + "Next Node = " + _nextNode + "Previous Node = " + _previousNode);
-                PlayerStateManager.Instance.RestoreLastStateRequest();
+                Debug.Log("END TRANSITION: DESIRED = " + desiredMovement + "Next Node = " + _nextNode + "Previous Node = " + _previousNode);
+                PlayerStateManager.Instance.RestoreLastStateRequest(forceChange: !_path[3]._door.IsHorizontal);
             }
         }
     }
