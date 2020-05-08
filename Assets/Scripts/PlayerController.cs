@@ -25,7 +25,8 @@ public class PlayerController : FreezableObject {
     #region Public Variables
     //Inspector Component References
     [SerializeField] private Transform _targetPannel = null;
-    [SerializeField] private Transform _playersTrans = null;
+    [SerializeField] private Transform _playerTransform = null;
+    [SerializeField] private BoxCollider _playerCollider = null;
     [SerializeField] private Rigidbody _playerRigid = null;
     [SerializeField] private ParentingFollow _parentingScript = null;
 
@@ -41,12 +42,12 @@ public class PlayerController : FreezableObject {
         get =>_targetPannel;
         set { 
             _targetPannel = value;
-            _playersTrans.rotation = _targetPannel.rotation;
+            _playerTransform.rotation = _targetPannel.rotation;
         }
     }
 
     public Transform PlayerTrans {
-        get => _playersTrans;
+        get => _playerTransform;
     }
 
     public Rigidbody PlayerRigid {
@@ -102,14 +103,14 @@ public class PlayerController : FreezableObject {
 
         //Vector2 desiredMovement = ManageMovementInputs();
 
-        //Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
+        //Vector3 tempVel = _playerTransform.InverseTransformVector(_playerRigid.velocity);
         //tempVel.x = desiredMovement.x * _movementSpeed;
         //if (desiredMovement.y == 1) {
         //    tempVel.y = _jumpForce;
         //}
         //if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
 
-        //_playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+        //_playerRigid.velocity = _playerTransform.TransformVector(tempVel);
 
         if (_isFrozen) {
             _playerRigid.Sleep();
@@ -125,30 +126,30 @@ public class PlayerController : FreezableObject {
     public void FreeMovementUpdate() {
         Vector2 desiredMovement = ManageMovementInputs();
 
-        Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
+        Vector3 tempVel = _playerTransform.InverseTransformVector(_playerRigid.velocity);
         tempVel.x = desiredMovement.x * _movementSpeed;
         if (desiredMovement.y == 1) {
             tempVel.y = _jumpForce;
         }
         if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
 
-        _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+        _playerRigid.velocity = _playerTransform.TransformVector(tempVel);
     }
 
     public void LadderMovementUpdate() {
         Vector2 desiredMovement = _movementInput;
         
-        Vector3 tempVel = _playersTrans.InverseTransformVector(_playerRigid.velocity);
+        Vector3 tempVel = _playerTransform.InverseTransformVector(_playerRigid.velocity);
         tempVel.x = desiredMovement.x * _movementSpeed * 0.25f;
         tempVel.y = desiredMovement.y * _movementSpeed * 0.25f;
 
         //Transform variation
-        //Vector3 xAxis = _playersTrans.right * desiredMovement.x * (Time.deltaTime * _movementSpeed * 0.25f);
-        //Vector3 yAxis = _playersTrans.up * desiredMovement.y * (Time.deltaTime * _movementSpeed * 0.25f);
-        //Vector3 newPos = _playersTrans.position + xAxis + yAxis;
-        //_playersTrans.position = newPos;
+        //Vector3 xAxis = _playerTransform.right * desiredMovement.x * (Time.deltaTime * _movementSpeed * 0.25f);
+        //Vector3 yAxis = _playerTransform.up * desiredMovement.y * (Time.deltaTime * _movementSpeed * 0.25f);
+        //Vector3 newPos = _playerTransform.position + xAxis + yAxis;
+        //_playerTransform.position = newPos;
 
-        _playerRigid.velocity = _playersTrans.TransformVector(tempVel);
+        _playerRigid.velocity = _playerTransform.TransformVector(tempVel);
     }
 
     public void TransitionMovementUpdate() {
@@ -158,10 +159,10 @@ public class PlayerController : FreezableObject {
         /* //OLD TEST
         Vector3 tempVel = Vector3.zero;
         if (desiredMovement.x > 0) {
-            tempVel = _currentConnection._rightDoor.position - _playersTrans.position;
+            tempVel = _currentConnection._rightDoor.position - _playerTransform.position;
             //_playerRigid.MovePosition(_currentConnection._rightDoor.position);
         } else if (desiredMovement.x < 0) {
-            tempVel = _currentConnection._leftDoor.position - _playersTrans.position;
+            tempVel = _currentConnection._leftDoor.position - _playerTransform.position;
             //_playerRigid.MovePosition(_currentConnection._leftDoor.position);
         }
 
@@ -189,6 +190,22 @@ public class PlayerController : FreezableObject {
         _cachedVelocity = Vector3.zero;
     }
 
+    /// <summary>
+    /// Disables the players movement collision only. In order to go through walls when moving using rigidbody.
+    /// Used by ladder movement.
+    /// </summary>
+    public void DisableCollision() {
+        _playerCollider.enabled = false;
+    }
+
+    /// <summary>
+    /// Enables the players movement collision only. In order to go through walls when moving using rigidbody.
+    /// Used by ladder movement.
+    /// </summary>
+    public void EnableCollision() {
+        _playerCollider.enabled = true;
+    }
+
     public void MovementUpdate(Vector2 input2D) {
         _movementInput = input2D;
     }
@@ -205,7 +222,7 @@ public class PlayerController : FreezableObject {
     #region Private Methods
     private void ManageGravityAndOrientation() {
         if (_targetPannel != null) {
-            if (_playersTrans.rotation != _targetPannel.rotation) _playersTrans.rotation = _targetPannel.rotation;
+            if (_playerTransform.rotation != _targetPannel.rotation) _playerTransform.rotation = _targetPannel.rotation;
             _gravity = _targetPannel.TransformVector(new Vector3(0, -9.81f, 0));
         }
 
@@ -232,11 +249,11 @@ public class PlayerController : FreezableObject {
     }
 
     private void SaveLocalSpeed() {
-        _localCachedVelocity = _playersTrans.InverseTransformVector(_cachedVelocity);
+        _localCachedVelocity = _playerTransform.InverseTransformVector(_cachedVelocity);
     }
 
     private Vector3 RestoreLocalSpeed() {
-        return _playersTrans.TransformVector(_localCachedVelocity);
+        return _playerTransform.TransformVector(_localCachedVelocity);
     }
     #endregion
 

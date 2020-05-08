@@ -13,6 +13,7 @@ public class Door : MonoBehaviour
     [SerializeField] private bool _isHorizontal = true;
     [SerializeField] private bool _goesRight = true;
 
+
     public Pannel GetPannel {
         get => _pannel;
     }
@@ -34,17 +35,25 @@ public class Door : MonoBehaviour
 
     public bool GoesRight { get => _goesRight; }
 
+    public static bool IsPlayerInside { get; set; }
+
+    private void Awake() {
+        IsPlayerInside = false;
+    }
+
     private void OnTriggerEnter(Collider other) {
         //If this door is a ladder enter ladder mode. When door has a closed state a collider needs to exist instead of the triggers => Only enter ladder mode when pressing up or down.
         if (!IsHorizontal) {
             PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.LadderMovement);
         }
         PlayerTransitionManager.Instance.DoorEntered(this);
+        IsPlayerInside = true;
     }
 
     private void OnTriggerExit(Collider other) {
         if (!IsHorizontal && PlayerStateManager.Instance.GetCurrentPlayerState == PlayerStateManager.PlayerState.LadderMovement) {
             PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.FreeMovement);
         }
+        IsPlayerInside = false;
     }
 }

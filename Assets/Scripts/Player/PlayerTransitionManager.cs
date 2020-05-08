@@ -129,7 +129,7 @@ public class PlayerTransitionManager : MonoBehaviour {
     }
 
     private void IntermediaryNodeReached(int nodeReachedIndex, int targetNodeIndex) {
-        Debug.Log("NODE REACHED: " + nodeReachedIndex + "TARGET NODE: " + targetNodeIndex);
+        //Debug.Log("NODE REACHED: " + nodeReachedIndex + "TARGET NODE: " + targetNodeIndex);
         PlayerController.Instance.TargetPannel = _path[nodeReachedIndex]._door.GetPannel.transform;
         _transitionSpeedMultiplier = (nodeReachedIndex + targetNodeIndex == 3) ? 2.5f : 1;    //sum == 3 is beacuse the indexes can only be adjacent and the result 3 is only possible if player is traveling between intermidiate nodes (1 and 2).
         //TODO DANI: Use variable dependent of distance between intermediate nodes (1 and 2)
@@ -148,7 +148,7 @@ public class PlayerTransitionManager : MonoBehaviour {
             return;
         }   //No next door assigned.
 
-        Debug.Log("CREATE PATH");
+        //Debug.Log("CREATE PATH");
 
         //Registers which direction forward should be. If the door goes right 1 is forward if not the -1 is forward.
         //This makes it so that I don't need to differentiate between different doors when moving.
@@ -221,7 +221,7 @@ public class PlayerTransitionManager : MonoBehaviour {
             if ((_nextNode < _path.Length - 1 && desiredMovement > 0) || (_previousNode > 0 && desiredMovement < 0)) {
                 NextNode(desiredMovement);
             } else { //If want to move to next set of nodes BUT at the end of either sides of the path revert to previous player state (FreeMovement || LadderMovement) => END OF TRANSITION MODE
-                Debug.Log("END TRANSITION: DESIRED = " + desiredMovement + "Next Node = " + _nextNode + "Previous Node = " + _previousNode);
+                //Debug.Log("END TRANSITION: DESIRED = " + desiredMovement + "Next Node = " + _nextNode + "Previous Node = " + _previousNode);
                 PlayerStateManager.Instance.RestoreLastStateRequest(forceChange: !_path[3]._door.IsHorizontal);
             }
         }

@@ -18,6 +18,7 @@ public class ParentingFollow : MonoBehaviour
     }
 
     public void ActivateParenting(Transform targetPannel) {
+        //TODO DANI: If targetPannel is null go look for it in the PannelManager that should have both the starting pannel as well as the current pannel of the player.
         _relativeOffset = _parentObject.InverseTransformVector(_chilledObject.position - _parentObject.position); //This gets the vector from the pannel to the player in World Space. Convert it to LocalSpace in order to be usable in any orientation.
         _followParent = true;
         StartCoroutine(_followParentCorroutine);

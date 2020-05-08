@@ -1607,8 +1607,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 1.27, z: 0.15}
-  m_Center: {x: 0, y: 0.115, z: 0}
+  m_Size: {x: 0.05, y: 1.4857302, z: 0.15}
+  m_Center: {x: 0, y: 0.0071348846, z: 0}
 --- !u!1 &604682852
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,8 +1699,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 91f31768baff06f47bc469f6866638ad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _message: Read the commented summary at the top of the PlayerTransitionManager
-    script.
+  _message: 'More tweeking needed for ladder/door
+
+    - Add manager and logic for
+    closed state to disable door/ladder and add floor/wall)
+
+    - Add the obligation'
 --- !u!4 &627684050
 Transform:
   m_ObjectHideFlags: 0
@@ -1885,8 +1889,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 1.27, z: 0.15}
-  m_Center: {x: 0, y: 0.115, z: 0}
+  m_Size: {x: 0.05, y: 1.5, z: 0.15}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &785035266
 GameObject:
   m_ObjectHideFlags: 0
@@ -2001,7 +2005,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &804098249
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -2180,7 +2184,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _targetPannel: {fileID: 1382924903}
-  _playersTrans: {fileID: 856317260}
+  _playerTransform: {fileID: 856317260}
+  _playerCollider: {fileID: 856317262}
   _playerRigid: {fileID: 856317261}
   _parentingScript: {fileID: 856317263}
   _movementSpeed: 1
@@ -2374,7 +2379,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   OnFreeMovementEnter:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 856317259}
+        m_MethodName: EnableCollision
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnTransitionModeEnter:
     m_PersistentCalls:
       m_Calls:
@@ -2405,7 +2421,18 @@ MonoBehaviour:
         m_CallState: 2
   OnLadderMovementEnter:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 856317259}
+        m_MethodName: DisableCollision
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   OnPausedGameEnter:
     m_PersistentCalls:
       m_Calls:
@@ -2564,8 +2591,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 1.27, z: 0.15}
-  m_Center: {x: 0, y: 0.115, z: 0}
+  m_Size: {x: 0.05, y: 1.5, z: 0.15}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &906216371
 GameObject:
   m_ObjectHideFlags: 0
@@ -3135,8 +3162,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.05, y: 1.27, z: 0.15}
-  m_Center: {x: 0, y: 0.115, z: 0}
+  m_Size: {x: 0.05, y: 1.5, z: 0.15}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1152436126
 GameObject:
   m_ObjectHideFlags: 0
@@ -3153,7 +3180,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1152436127
 Transform:
   m_ObjectHideFlags: 0
@@ -3652,8 +3679,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.6704514, z: 1}
-  m_Center: {x: 0, y: -0.15, z: 0}
+  m_Size: {x: 1, y: 0.7, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &1289203069
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3909,8 +3936,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 0.6704514, z: 1}
-  m_Center: {x: 0, y: -0.15, z: 0}
+  m_Size: {x: 1, y: 0.7, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &1450271525
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4474,8 +4501,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 0.7974969, y: 0.6704514, z: 1}
-  m_Center: {x: 0.1012517, y: -0.14999998, z: 0}
+  m_Size: {x: 1, y: 0.7, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &1706366806
 SpriteRenderer:
   m_ObjectHideFlags: 0
