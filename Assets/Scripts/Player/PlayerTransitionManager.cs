@@ -72,6 +72,7 @@ public class PlayerTransitionManager : MonoBehaviour {
     private Pannel _nextPannel = null;  //The pannel you will be entering.
     private int _forwardDirection = 1;  //This int should always be either 1 or -1. When activating the transition mode the player has to be pushing some direction that would be forward. This registers that.
     private float _transitionSpeedMultiplier = 1f;
+    private bool _togglePlayerRender = true;
     #endregion
 
     #region Getters & Setters
@@ -129,6 +130,8 @@ public class PlayerTransitionManager : MonoBehaviour {
     }
 
     private void IntermediaryNodeReached(int nodeReachedIndex, int targetNodeIndex) {
+        _togglePlayerRender = !_togglePlayerRender;
+        PlayerController.Instance.Renderer.gameObject.SetActive(_togglePlayerRender);
         //Debug.Log("NODE REACHED: " + nodeReachedIndex + "TARGET NODE: " + targetNodeIndex);
         PlayerController.Instance.TargetPannel = _path[nodeReachedIndex]._door.GetPannel.transform;
         _transitionSpeedMultiplier = (nodeReachedIndex + targetNodeIndex == 3) ? 2.5f : 1;    //sum == 3 is beacuse the indexes can only be adjacent and the result 3 is only possible if player is traveling between intermidiate nodes (1 and 2).

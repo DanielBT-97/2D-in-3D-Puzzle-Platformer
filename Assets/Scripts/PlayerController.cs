@@ -29,6 +29,7 @@ public class PlayerController : FreezableObject {
     [SerializeField] private BoxCollider _playerCollider = null;
     [SerializeField] private Rigidbody _playerRigid = null;
     [SerializeField] private ParentingFollow _parentingScript = null;
+    [SerializeField] private SpriteRenderer _spriteRenderer = null;
 
     //Movement
     [SerializeField] private float _movementSpeed = 1f;
@@ -54,6 +55,10 @@ public class PlayerController : FreezableObject {
         get => _playerRigid;
     }
 
+    public SpriteRenderer Renderer {
+        get => _spriteRenderer;
+    }
+
     public float MovementSpeed {
         get => _movementSpeed;
     }
@@ -73,7 +78,7 @@ public class PlayerController : FreezableObject {
     private Vector3 _cachedVelocity = Vector3.zero;
     private Vector3 _localCachedVelocity = Vector3.zero;
 
-    private bool _jump = true;
+    private bool _jump = false;
     private Vector2 _movementInput = Vector2.zero;
 
     //Pannel Transition Temporal
