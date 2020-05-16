@@ -647,7 +647,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 693065012}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 0.01, z: -4.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -769,11 +769,6 @@ PrefabInstance:
       propertyPath: _targetPannel
       value: 
       objectReference: {fileID: 1402229605}
-    - target: {fileID: 2143182053485999128, guid: 430cf05189fd1db40b5e1c6ac0eff580,
-        type: 3}
-      propertyPath: _movementSpeed
-      value: 1.75
-      objectReference: {fileID: 0}
     - target: {fileID: 2143182053485999129, guid: 430cf05189fd1db40b5e1c6ac0eff580,
         type: 3}
       propertyPath: m_Name
@@ -1072,6 +1067,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Plannel_Starting
+      objectReference: {fileID: 0}
+    - target: {fileID: 7946876120990917997, guid: 91b38682d7d2e9049868b43720a2ef03,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7946876121099294026, guid: 91b38682d7d2e9049868b43720a2ef03,
         type: 3}

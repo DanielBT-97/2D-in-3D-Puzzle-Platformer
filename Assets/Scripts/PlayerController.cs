@@ -22,12 +22,13 @@ public class PlayerController : FreezableObject {
         get { return _instance; }
     }
 
-    #region Public Variables
+    #region Public & Serialized Variables
     //Inspector Component References
     [SerializeField] private Transform _targetPannel = null;
     [SerializeField] private Transform _playerTransform = null;
     [SerializeField] private BoxCollider _playerCollider = null;
     [SerializeField] private Rigidbody _playerRigid = null;
+    [SerializeField] private Animator _playerAnimator = null;
     [SerializeField] private ParentingFollow _parentingScript = null;
     [SerializeField] private SpriteRenderer _spriteRenderer = null;
 
@@ -36,6 +37,18 @@ public class PlayerController : FreezableObject {
     [SerializeField] private float _transitionSpeed = 1f;
     [SerializeField] private float _jumpForce = 10f;  //Force applied when 
     [SerializeField] private float _maxFallVelocity = 5f; //Maximum Y Speed value when falling.
+    [SerializeField] private LayerMask _floorLayer = 0;
+    [SerializeField] private Vector3 _boxCastSize = new Vector3(0.17f, 0.02f, 0.05f);
+    [SerializeField] private float _maxRayDistance = 0.125f;
+
+    //Pannel Transition Temporal
+    [System.Serializable]
+    public struct DoorConnection
+    {
+        public Transform _leftDoor, _rightDoor;
+    }
+
+    public DoorConnection _currentConnection;
     #endregion
 
     #region Getters & Setters
@@ -70,6 +83,10 @@ public class PlayerController : FreezableObject {
     public Vector2 MovementInput { 
         get => _movementInput;
     }
+
+    public bool IsGrounded {
+        get => _grounded;
+    }
     #endregion
 
     #region Private Variables
@@ -80,14 +97,9 @@ public class PlayerController : FreezableObject {
 
     private bool _jump = false;
     private Vector2 _movementInput = Vector2.zero;
-
-    //Pannel Transition Temporal
-    [System.Serializable]
-    public struct DoorConnection {
-        public Transform _leftDoor, _rightDoor;
-    }
-
-    public DoorConnection _currentConnection;
+    private bool _grounded = false;
+    private RaycastHit _rayHit;
+    private Vector3 _boxCastCenter, _boxCastHalfExtends;
     #endregion
 
     #region Unity Cycle
@@ -95,6 +107,11 @@ public class PlayerController : FreezableObject {
         _instance = this;
         _gravity = new Vector3(0, -9.8f, 0);
         if (_maxFallVelocity > 0) _maxFallVelocity *= -1;
+
+        //BoxCast parameters
+        
+        _boxCastHalfExtends = _boxCastSize / 2;
+        _maxRayDistance = _boxCastHalfExtends.y + _playerCollider.size.y / 2;
     }
 
     void Start() {
@@ -117,6 +134,12 @@ public class PlayerController : FreezableObject {
 
         //_playerRigid.velocity = _playerTransform.TransformVector(tempVel);
 
+        ////if (_isFrozen) {
+        ////    _playerRigid.Sleep();
+        ////}
+    }
+
+    private void FixedUpdate() {
         if (_isFrozen) {
             _playerRigid.Sleep();
         }
@@ -125,10 +148,33 @@ public class PlayerController : FreezableObject {
     private void OnDestroy() {
         _gravity = new Vector3(0, -9.81f, 0);
     }
+
+    //Draw the BoxCast as a gizmo to show where it currently is testing. Click the Gizmos button to see this
+    void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+
+        //Check if there has been a hit yet
+        if (_grounded) {
+            Gizmos.color = Color.green;
+            //Draw a Ray forward from GameObject toward the hit
+            Gizmos.DrawRay(_boxCastCenter, -_playerTransform.up * _rayHit.distance);
+            //Draw a cube that extends to where the hit exists
+            Gizmos.DrawWireCube(_boxCastCenter + -_playerTransform.up * _rayHit.distance, _boxCastHalfExtends * 2);
+        }
+        //If there hasn't been a hit yet, draw the ray at the maximum distance
+        else {
+            //Draw a Ray forward from GameObject toward the maximum distance
+            Gizmos.DrawRay(_boxCastCenter, -_playerTransform.up * _maxRayDistance);
+            //Draw a cube at the maximum distance
+            Gizmos.DrawWireCube(_boxCastCenter + -_playerTransform.up * _maxRayDistance, _boxCastHalfExtends * 2);
+        }
+    }
     #endregion
 
     #region API Methods
     public void FreeMovementUpdate() {
+        CheckForGrounded();
+
         Vector2 desiredMovement = ManageMovementInputs();
 
         Vector3 tempVel = _playerTransform.InverseTransformVector(_playerRigid.velocity);
@@ -225,7 +271,25 @@ public class PlayerController : FreezableObject {
     #endregion
 
     #region Private Methods
+    /// <summary>
+    /// Checks using a BoxCast whether or not the player is grounded each frame.
+    /// </summary>
+    private void CheckForGrounded() {
+        _boxCastCenter = _playerCollider.center;
+        _boxCastCenter = _playerTransform.TransformPoint(_boxCastCenter);
+        if (Physics.BoxCast(_boxCastCenter, _boxCastHalfExtends, -_playerTransform.up, out _rayHit, _playerTransform.rotation, _maxRayDistance, _floorLayer)) {
+            //Debug.Log("HIT: " + _rayHit.collider.gameObject.name);
+            if (_grounded == false) {
+                JustGrounded();
+            }
+            _grounded = true;
+        } else { 
+            _grounded = false;
+        }
+    }
+
     private void ManageGravityAndOrientation() {
+        //TODO DANI: If NULL go ask for starting pannel/current pannel to the pannel manager.
         if (_targetPannel != null) {
             if (_playerTransform.rotation != _targetPannel.rotation) _playerTransform.rotation = _targetPannel.rotation;
             _gravity = _targetPannel.TransformVector(new Vector3(0, -9.81f, 0));
@@ -245,8 +309,10 @@ public class PlayerController : FreezableObject {
 
         desiredMovement.x = _movementInput.x;
 
-        if (_jump) {
+        if (_jump && _grounded) {
             desiredMovement.y = 1;
+            _jump = false;
+        } else if (_jump && !_grounded) {
             _jump = false;
         }
 
@@ -260,6 +326,9 @@ public class PlayerController : FreezableObject {
     private Vector3 RestoreLocalSpeed() {
         return _playerTransform.TransformVector(_localCachedVelocity);
     }
-    #endregion
 
+    private void JustGrounded() {
+        _playerAnimator.SetTrigger("Landed");
+    }
+    #endregion
 }

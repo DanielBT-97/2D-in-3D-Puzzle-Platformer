@@ -304,12 +304,18 @@ MonoBehaviour:
   _playerTransform: {fileID: 2143182053485999135}
   _playerCollider: {fileID: 2143182053485999133}
   _playerRigid: {fileID: 2143182053485999134}
+  _playerAnimator: {fileID: 5197885013795562566}
   _parentingScript: {fileID: 2143182053485999132}
   _spriteRenderer: {fileID: 2143182051716619155}
-  _movementSpeed: 1
+  _movementSpeed: 1.75
   _transitionSpeed: 0.75
   _jumpForce: 5
   _maxFallVelocity: 3
+  _floorLayer:
+    serializedVersion: 2
+    m_Bits: 2048
+  _boxCastSize: {x: 0.17, y: 0.02, z: 0.05}
+  _maxRayDistance: 0.125
   _currentConnection:
     _leftDoor: {fileID: 0}
     _rightDoor: {fileID: 0}
