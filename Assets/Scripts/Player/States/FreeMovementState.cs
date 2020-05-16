@@ -10,6 +10,7 @@ public class FreeMovementState : IPlayerStateHandler
 
     public void Enter() {
         PlayerStateManager.Instance.OnFreeMovementEnter.Invoke();
+        PlayerController.Instance.PlayerAnimator.SetBool("FreeMovement", true);
     }
 
     public void Execute() {
@@ -18,5 +19,7 @@ public class FreeMovementState : IPlayerStateHandler
 
     public void Exit() {
         PlayerStateManager.Instance.OnFreeMovementExit.Invoke();
+        PlayerController.Instance.PlayerAnimator.SetBool("FreeMovement", false);
+        //PlayerController.Instance.PlayerAnimator.SetFloat("HorizontalDirection", 0);
     }
 }

@@ -72,6 +72,10 @@ public class PlayerController : FreezableObject {
         get => _spriteRenderer;
     }
 
+    public Animator PlayerAnimator {
+        get => _playerAnimator;
+    }
+
     public float MovementSpeed {
         get => _movementSpeed;
     }
@@ -100,6 +104,7 @@ public class PlayerController : FreezableObject {
     private bool _grounded = false;
     private RaycastHit _rayHit;
     private Vector3 _boxCastCenter, _boxCastHalfExtends;
+    private bool _setLandedTrigger = false;
     #endregion
 
     #region Unity Cycle
@@ -122,21 +127,6 @@ public class PlayerController : FreezableObject {
         base.Update();
 
         ManageGravityAndOrientation();
-
-        //Vector2 desiredMovement = ManageMovementInputs();
-
-        //Vector3 tempVel = _playerTransform.InverseTransformVector(_playerRigid.velocity);
-        //tempVel.x = desiredMovement.x * _movementSpeed;
-        //if (desiredMovement.y == 1) {
-        //    tempVel.y = _jumpForce;
-        //}
-        //if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
-
-        //_playerRigid.velocity = _playerTransform.TransformVector(tempVel);
-
-        ////if (_isFrozen) {
-        ////    _playerRigid.Sleep();
-        ////}
     }
 
     private void FixedUpdate() {
@@ -176,6 +166,7 @@ public class PlayerController : FreezableObject {
         CheckForGrounded();
 
         Vector2 desiredMovement = ManageMovementInputs();
+        PlayerController.Instance.PlayerAnimator.SetFloat("HorizontalDirection", desiredMovement.x);
 
         Vector3 tempVel = _playerTransform.InverseTransformVector(_playerRigid.velocity);
         tempVel.x = desiredMovement.x * _movementSpeed;
@@ -185,6 +176,10 @@ public class PlayerController : FreezableObject {
         if (tempVel.y < _maxFallVelocity) tempVel.y = _maxFallVelocity;  //Limit Fall Speed
 
         _playerRigid.velocity = _playerTransform.TransformVector(tempVel);
+
+        if (desiredMovement.x == 0) { 
+            //Trigger a random idle animation at random every now and then.
+        }
     }
 
     public void LadderMovementUpdate() {
@@ -205,6 +200,7 @@ public class PlayerController : FreezableObject {
 
     public void TransitionMovementUpdate() {
         Vector2 desiredMovement = _movementInput;
+        PlayerController.Instance.PlayerAnimator.SetFloat("HorizontalDirection", desiredMovement.x);
         PlayerTransitionManager.Instance.TransitionModeMovement(desiredMovement);
 
         /* //OLD TEST
@@ -277,6 +273,10 @@ public class PlayerController : FreezableObject {
     private void CheckForGrounded() {
         _boxCastCenter = _playerCollider.center;
         _boxCastCenter = _playerTransform.TransformPoint(_boxCastCenter);
+        if (_playerAnimator.GetBool("Landed") && _setLandedTrigger) {
+            _playerAnimator.ResetTrigger("Landed");
+        }
+
         if (Physics.BoxCast(_boxCastCenter, _boxCastHalfExtends, -_playerTransform.up, out _rayHit, _playerTransform.rotation, _maxRayDistance, _floorLayer)) {
             //Debug.Log("HIT: " + _rayHit.collider.gameObject.name);
             if (_grounded == false) {
@@ -286,6 +286,8 @@ public class PlayerController : FreezableObject {
         } else { 
             _grounded = false;
         }
+        
+        _playerAnimator.SetBool("MidAir", _grounded);
     }
 
     private void ManageGravityAndOrientation() {
@@ -329,6 +331,7 @@ public class PlayerController : FreezableObject {
 
     private void JustGrounded() {
         _playerAnimator.SetTrigger("Landed");
+        _setLandedTrigger = true;
     }
     #endregion
 }

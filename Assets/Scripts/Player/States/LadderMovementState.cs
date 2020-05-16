@@ -18,6 +18,8 @@ public class LadderMovementState : IPlayerStateHandler
         PlayerController.Instance.PlayerRigid.velocity = Vector3.zero;
         PlayerController.Instance.PlayerRigid.useGravity = false;
         PlayerStateManager.Instance.OnLadderMovementEnter.Invoke();
+        PlayerController.Instance.PlayerAnimator.SetBool("LadderState", true);
+        PlayerController.Instance.PlayerAnimator.SetTrigger("LadderEnter");
     }
 
     public void Execute() {
@@ -27,6 +29,7 @@ public class LadderMovementState : IPlayerStateHandler
     public void Exit() {
         PlayerController.Instance.PlayerRigid.useGravity = true;
         PlayerStateManager.Instance.OnLadderMovementExit.Invoke();
+        PlayerController.Instance.PlayerAnimator.SetBool("LadderState", false);
     }
 
 }

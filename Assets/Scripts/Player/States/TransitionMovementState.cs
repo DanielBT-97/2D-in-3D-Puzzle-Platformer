@@ -18,6 +18,7 @@ public class TransitionMovementState : IPlayerStateHandler
         PlayerController.Instance.PlayerRigid.velocity = Vector3.zero;
         PlayerController.Instance.PlayerRigid.useGravity = false;
         PlayerStateManager.Instance.OnTransitionModeEnter.Invoke();
+        PlayerController.Instance.PlayerAnimator.SetBool("FreeMovement", true);
     }
 
     public void Execute() {
@@ -27,5 +28,7 @@ public class TransitionMovementState : IPlayerStateHandler
     public void Exit() {
         PlayerController.Instance.PlayerRigid.useGravity = true;
         PlayerStateManager.Instance.OnTransitionModeExit.Invoke();
+        PlayerController.Instance.PlayerAnimator.SetBool("FreeMovement", false);
+        //PlayerController.Instance.PlayerAnimator.SetFloat("HorizontalDirection", 0);
     }
 }
