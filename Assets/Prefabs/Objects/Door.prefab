@@ -250,7 +250,7 @@ GameObject:
   m_Component:
   - component: {fileID: 975682312250205038}
   - component: {fileID: 975682312250205039}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DoorSprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}

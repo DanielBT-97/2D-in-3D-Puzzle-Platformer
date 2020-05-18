@@ -54,7 +54,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3701236887981864961}
   - component: {fileID: 8997781159102333855}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: Graphics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -311,7 +311,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8776906774553624399}
   - component: {fileID: 8776906774553624398}
-  m_Layer: 0
+  m_Layer: 15
   m_Name: PuzzleArea
   m_TagString: Untagged
   m_Icon: {fileID: 0}
