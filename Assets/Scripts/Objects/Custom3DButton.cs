@@ -35,14 +35,13 @@ public class Custom3DButton : MonoBehaviour {
 
     #region Private Functions
     private void MousePress(InputAction.CallbackContext actionContext) {
-        Debug.Log("Press Action has finished");
+        //Debug.Log("Press Action has finished");
         _mouseHold = true;
         OnButtonClick.Invoke();
-        //if (actionContext.performed) {  } else if (actionContext.canceled) {  }
     }
 
     private void MouseRelease(InputAction.CallbackContext actionContext) {
-        Debug.Log("Press Action has been canceled");
+        //Debug.Log("Press Action has been canceled");
         _mouseHold = false;
         OnButtonRelease.Invoke();
     }
@@ -53,16 +52,15 @@ public class Custom3DButton : MonoBehaviour {
 
     #region Unity Cycle
     private void Awake() {
+        if(_playerInput == null) _playerInput = PlayerController.Instance.gameObject.GetComponent<PlayerInput>();
+        if (_mainCamera == null) _mainCamera = Camera.main;
+
         _actionAsset = _playerInput.actions;
         _pointerPosition = _actionAsset.FindAction("Point");
         _pointerClick = _actionAsset.FindAction("UIClick");
         _pointerClick.performed += MousePress;
         _pointerClick.canceled += MouseRelease;
     }
-    #endregion
-
-    #region Courrutines
-    #endregion
 
     void Update() {
         if (_mouseHold) {
@@ -72,5 +70,16 @@ public class Custom3DButton : MonoBehaviour {
                 print(_hit.collider.name);
             }
         }
+    }
+    #endregion
+
+    #region Courrutines
+    #endregion
+
+
+    [ContextMenu("Fill References")]
+    private void LookForCameraAndInput() {
+        _mainCamera = Camera.main;
+        _playerInput = GameObject.Find("Player").GetComponent<PlayerInput>();
     }
 }

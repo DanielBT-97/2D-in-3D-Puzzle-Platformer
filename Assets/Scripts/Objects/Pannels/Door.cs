@@ -9,6 +9,7 @@ public class Door : MonoBehaviour
 
     #region Public & Serialized Variables
     [SerializeField] private Pannel _pannel = null;
+    [SerializeField] private DoorConnectionPort _connectionPort = null;
 
     [SerializeField] private Door _targetDoor = null;
     [SerializeField] private Transform _doorPosition = null; //TODO: Get a reference to the target position of the door (child inside the door that marks the end of transition)
