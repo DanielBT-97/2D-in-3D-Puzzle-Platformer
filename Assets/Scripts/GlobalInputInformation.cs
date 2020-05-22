@@ -47,8 +47,10 @@ public class GlobalInputInformation : MonoBehaviour {
     #region API Methods
     public Vector2 GetMousePositionWorld(float zValue) {
         Vector3 currentPos = GetMousePositionScreen;
-        currentPos.z = zValue - (_mainCamera.transform.position.z - _mainCamera.nearClipPlane);
+        //currentPos.z = zValue - (_mainCamera.transform.position.z + _mainCamera.nearClipPlane);
+        currentPos.z = zValue - _mainCamera.transform.position.z;
         currentPos = _mainCamera.ScreenToWorldPoint(currentPos);
+        Debug.Log("POS: " + currentPos);
 
         return currentPos;
     }

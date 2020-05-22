@@ -49,6 +49,13 @@ public class DoorConnectionPort : MonoBehaviour {
     #endregion
 
     #region API Methods
+    public void ConnectEditStarted() {
+        _previousMousePosition = GlobalInputInformation.Instance.GetMousePositionWorld(this.transform.position.z);
+        _isDragging = true;
+        _plugRenderer.sprite = _doorController.GoesRight ? _leftPlug : _rightPlug;
+        _connectionPointerRenderer.enabled = true;
+    }
+
     public bool ConnectionRequested(Door otherDoor) {
         if (_hasConnection) {
             ResetConnectionPointer();
@@ -66,12 +73,6 @@ public class DoorConnectionPort : MonoBehaviour {
         Debug.Log("ConnectionBroken");
         _hasConnection = false;
         ResetConnectionPort();
-    }
-
-    public void ConnectEditStarted() {
-        _previousMousePosition = GlobalInputInformation.Instance.GetMousePositionWorld(this.transform.position.z);
-        _isDragging = true;
-        _connectionPointerRenderer.enabled = true;
     }
 
     public void ConnectionEditEnded() {
@@ -95,7 +96,8 @@ public class DoorConnectionPort : MonoBehaviour {
             _offsetToMove = currentPos - _previousMousePosition;
             if (_transformToWorld)_offsetToMove = _connectionPointer.TransformVector(_offsetToMove);
             _connectionPointer.position = new Vector3(_connectionPointer.position.x + _offsetToMove.x, _connectionPointer.position.y + _offsetToMove.y, _connectionPointer.position.z);
-            
+            //_connectionPointer.position = new Vector3(currentPos.x, currentPos.y, _connectionPointer.position.z);
+
             _previousMousePosition = currentPos;
         }
     }
