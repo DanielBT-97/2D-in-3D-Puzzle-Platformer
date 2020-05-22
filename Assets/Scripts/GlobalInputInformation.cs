@@ -45,6 +45,12 @@ public class GlobalInputInformation : MonoBehaviour {
     #endregion
 
     #region API Methods
+    /// <summary>
+    /// This method takes the Z position of an object in 3D and returns the mouse position in that ZPlane.
+    /// It is used for the dragging of the door connections using the Door connection pointers as the Z position reference.
+    /// </summary>
+    /// <param name="zValue">Z position of an object marking the ZPlane for the mouse.</param>
+    /// <returns></returns>
     public Vector2 GetMousePositionWorld(float zValue) {
         Vector3 currentPos = GetMousePositionScreen;
         //currentPos.z = zValue - (_mainCamera.transform.position.z + _mainCamera.nearClipPlane);

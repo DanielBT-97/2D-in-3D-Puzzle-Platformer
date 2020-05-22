@@ -7,6 +7,12 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 682880630146138615, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -6862689515818493638, guid: 78d9bf7d99d9acd4fbaaf2fecfb09425,
+        type: 3}
     - target: {fileID: 975682311559520168, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -76,6 +82,27 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: LeftDoor Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 2247781524009632735, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3078782957883037267, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6789109690499447626, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7,
+        type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 6868065633601124428, guid: 78d9bf7d99d9acd4fbaaf2fecfb09425,
+        type: 3}
+    - target: {fileID: 6941374744032832294, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7,
+        type: 3}
+      propertyPath: m_LocalScale.x
+      value: -1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b0a7b2a83e93f4142b0ba7c77dc6c3c7, type: 3}
