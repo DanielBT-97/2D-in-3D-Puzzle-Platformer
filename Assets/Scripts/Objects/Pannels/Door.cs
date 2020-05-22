@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Door : MonoBehaviour
 {
+    private const int CLOSED = 0;
+    private const int OPENED = 1;
+
+    #region Public & Serialized Variables
     [SerializeField] private Pannel _pannel = null;
 
     [SerializeField] private Door _targetDoor = null;
@@ -13,7 +17,16 @@ public class Door : MonoBehaviour
     [SerializeField] private bool _isHorizontal = true;
     [SerializeField] private bool _goesRight = true;
 
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private Sprite[] _doorSprites;
+    #endregion
 
+    #region Private Variables
+    private bool _isOpened = false;
+    private int _doorState = CLOSED;
+    #endregion
+
+    #region Getters & Setters
     public Pannel GetPannel {
         get => _pannel;
     }
@@ -37,6 +50,19 @@ public class Door : MonoBehaviour
 
     public static bool IsPlayerInside { get; set; }
 
+    public bool IsOpened {
+        get => _isOpened;
+        set {
+            _isOpened = value;
+            //Change state.
+            if (_isOpened) { _doorState = OPENED; }
+            else { _doorState = CLOSED; }
+            ChangeSprite(_doorState);
+        }
+    }
+    #endregion
+
+    #region Unity Cycle
     private void Awake() {
         IsPlayerInside = false;
     }
@@ -56,4 +82,40 @@ public class Door : MonoBehaviour
         }
         IsPlayerInside = false;
     }
+    #endregion
+
+    #region API Methods
+    public void BreakConnection() {
+        _targetDoor = null;
+        IsOpened = false;
+    }
+
+    public void CreateConnection(Door targetDoor) {
+        _targetDoor = targetDoor;
+        IsOpened = true;
+    }
+
+    public bool CheckConnectionAngle(float angleLimit) {
+        if (_targetDoor == null) { return false; }
+
+        bool isValid = false;
+        if (Vector3.Angle(_doorOutsidePosition.position, _targetDoor.OutsideDoorPosition.position) > angleLimit) {
+            isValid = true;
+        }
+
+        return isValid;
+    }
+    #endregion
+
+    #region Private Functions
+    private void ChangeSprite(int currentState) {
+        _spriteRenderer.sprite = _doorSprites[currentState];
+    }
+
+    [ContextMenu("ToggleDoor")]
+    private void TogleDoor() {
+        _isOpened = !_isOpened;
+        ChangeSprite(_isOpened ? OPENED : CLOSED);
+    }
+    #endregion
 }

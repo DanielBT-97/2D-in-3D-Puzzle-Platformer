@@ -137,6 +137,10 @@ MonoBehaviour:
   _doorOutsidePosition: {fileID: 975682313123173887}
   _isHorizontal: 1
   _goesRight: 1
+  _spriteRenderer: {fileID: 975682312250205039}
+  _doorSprites:
+  - {fileID: -4178302316325722471, guid: 806c31ca97e77e245b7da250c63da4fd, type: 3}
+  - {fileID: 9138053702189331680, guid: 806c31ca97e77e245b7da250c63da4fd, type: 3}
 --- !u!65 &975682311559520170
 BoxCollider:
   m_ObjectHideFlags: 0
