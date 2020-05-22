@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - ConnectionPointer
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - PannelLimits
   - PuzzleArea
   - DoorConnector
-  - 
+  - 3DButton
   - 
   - 
   - 
