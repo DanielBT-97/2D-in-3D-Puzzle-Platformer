@@ -33,8 +33,15 @@ public class Door : MonoBehaviour
     }
 
     public Door TargetDoor {
-        get { return _targetDoor; }
-        set { _targetDoor = value; }
+        get => _targetDoor;
+        set {
+            _targetDoor = value;
+            if (_targetDoor != null) {
+                CreateConnection(_targetDoor);
+            } else {
+                BreakConnection();
+            }
+        }
     }
 
     public Transform DoorPosition {
@@ -115,8 +122,7 @@ public class Door : MonoBehaviour
 
     [ContextMenu("ToggleDoor")]
     private void TogleDoor() {
-        _isOpened = !_isOpened;
-        ChangeSprite(_isOpened ? OPENED : CLOSED);
+        IsOpened = !IsOpened;
     }
     #endregion
 }

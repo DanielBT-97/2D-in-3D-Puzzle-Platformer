@@ -455,6 +455,7 @@ GameObject:
   - component: {fileID: 693065014}
   - component: {fileID: 693065013}
   - component: {fileID: 693065016}
+  - component: {fileID: 693065017}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -558,6 +559,26 @@ MonoBehaviour:
   m_RequiresDepthTexture: 0
   m_RequiresColorTexture: 0
   m_Version: 2
+--- !u!114 &693065017
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 693065012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c88f5cead0c0b2a4eb05b5900433f8d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AssetsPPU: 64
+  m_RefResolutionX: 320
+  m_RefResolutionY: 180
+  m_UpscaleRT: 0
+  m_PixelSnapping: 0
+  m_CropFrameX: 0
+  m_CropFrameY: 0
+  m_StretchFill: 0
 --- !u!1001 &798303732
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -804,7 +825,7 @@ PrefabInstance:
     - target: {fileID: 7946876119805102360, guid: 91b38682d7d2e9049868b43720a2ef03,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.422
+      value: 1.434
       objectReference: {fileID: 0}
     - target: {fileID: 7946876119805102360, guid: 91b38682d7d2e9049868b43720a2ef03,
         type: 3}
@@ -1135,6 +1156,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5823695952627975406, guid: 1c7a5430dbd21bd4681fbc3a8804d759,
+        type: 3}
+      propertyPath: cam
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5823695952627975406, guid: 1c7a5430dbd21bd4681fbc3a8804d759,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8776906774553624396, guid: 1c7a5430dbd21bd4681fbc3a8804d759,
         type: 3}
       propertyPath: m_Name

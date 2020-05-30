@@ -23,12 +23,21 @@ public class DoorConnectionPort : MonoBehaviour {
     public bool HasConnection {
         get => _hasConnection;
     }
+
+    public Door DoorController {
+        get => _doorController;
+    }
+
+    public DoorConnectionLine LineController {
+        get => _connectionLineController;
+    }
     #endregion
 
     #region Serialized Variables
     [SerializeField] private Door _doorController = null;   //This port's door controller.
     [SerializeField] private Transform _connectionPointer = null;   //This port's pointer transform.
     [SerializeField] private SpriteRenderer _connectionPointerRenderer = null;  //This port's pointer renderer.
+    [SerializeField] private DoorConnectionLine _connectionLineController = null; //This is the ports line renderer.
 
     [SerializeField] private Sprite _leftPlug = null, _rightPlug = null, _fullPlug = null;  //This port's plugs different sprite variations.
     [SerializeField] private SpriteRenderer _plugRenderer = null;   //This port's plug renderer.
@@ -44,6 +53,7 @@ public class DoorConnectionPort : MonoBehaviour {
     private void ResetConnectionPort() {
         ResetConnectionPointer();
         ResetPlug();
+        _doorController.BreakConnection();
     }
 
     /// <summary>
@@ -59,6 +69,7 @@ public class DoorConnectionPort : MonoBehaviour {
     private void ResetConnectionPointer() {
         _connectionPointer.position = _plugRenderer.transform.position;
         _connectionPointerRenderer.enabled = false;
+        //_connectionLineController.HideLine();
     }
 
     /// <summary>
@@ -76,6 +87,15 @@ public class DoorConnectionPort : MonoBehaviour {
 
         _previousMousePosition = currentPos;
     }
+
+    private void ValidConnectionPortEntered(Collider other) {
+        if (other.gameObject.TryGetComponent<DoorConnectionPort>(out DoorConnectionPort temp)) { 
+            if (temp == this || temp.HasConnection || temp.DoorController.GoesRight == this.DoorController.GoesRight) { 
+                return; 
+            }
+            _otherPort = temp;
+        }
+    }
     #endregion
 
     #region API Methods
@@ -83,6 +103,12 @@ public class DoorConnectionPort : MonoBehaviour {
     /// Method called when the player has clicked on the port's plug and started dragging.
     /// </summary>
     public void ConnectEditStarted() {
+        if (HasConnection) {
+            _otherPort.ConnectionBroken();
+            ConnectionBroken();
+        }
+
+        _connectionLineController.ShowLine();
         _otherPort = null;
         _previousMousePosition = GlobalInputInformation.Instance.GetMousePositionWorld(this.transform.position.z);
         _isDragging = true;
@@ -95,15 +121,19 @@ public class DoorConnectionPort : MonoBehaviour {
     /// </summary>
     /// <param name="otherDoor">The other door requesting the connection.</param>
     /// <returns>Returns true if the connection was possible.</returns>
-    public bool ConnectionRequested(Door otherDoor) {
+    public bool ConnectionRequested(DoorConnectionPort otherDoor) {
         if (_hasConnection) {
-            ResetConnectionPointer();
+            //ResetConnectionPointer();
             return false; 
         }
 
-        _doorController.TargetDoor = otherDoor;
+        _otherPort = otherDoor;
+        _doorController.TargetDoor = otherDoor.DoorController;
+        _doorController.CreateConnection(otherDoor.DoorController);
         _plugRenderer.sprite = _doorController.GoesRight ? _leftPlug : _rightPlug;
         _hasConnection = true;
+        _connectionLineController.HideLine();
+        ResetConnectionPointer();
 
         return true;
     }
@@ -116,6 +146,7 @@ public class DoorConnectionPort : MonoBehaviour {
         Debug.Log("ConnectionBroken");
         _hasConnection = false;
         ResetConnectionPort();
+        _connectionLineController.ResetLine();
     }
 
     /// <summary>
@@ -127,13 +158,19 @@ public class DoorConnectionPort : MonoBehaviour {
     /// </summary>
     public void ConnectionEditEnded() {
         _isDragging = false;
-        if (_otherPort == null) { ConnectionBroken(); return; }
+        if (_otherPort == null || _otherPort == this) { ConnectionBroken(); return; }
 
-        if (_otherPort != this) {
-            Debug.Log("SELECTED OTHER DOOR: " + _otherPort, _otherPort);
-            Debug.Log("THIS DOOR: ", this);
-            //ConnectionRequest
-        } else { Debug.Log("SELECTED SAME DOOR: " + _otherPort, _otherPort); Debug.Log("THIS DOOR: ", this); ConnectionBroken(); }
+        if (_otherPort.ConnectionRequested(this)) {
+            _hasConnection = true;
+            _doorController.CreateConnection(_doorController);
+            _doorController.TargetDoor = _otherPort._doorController;
+            _connectionLineController.TargetDoorPort = _otherPort.LineController.PlugTransform;
+        }
+
+        ResetConnectionPointer();
+        //Debug.Log("SELECTED OTHER DOOR: " + _otherPort, _otherPort);
+        //Debug.Log("THIS DOOR: ", this);
+        // else { Debug.Log("SELECTED SAME DOOR: " + _otherPort, _otherPort); Debug.Log("THIS DOOR: ", this); ConnectionBroken(); }
     }
     #endregion
 
@@ -150,7 +187,9 @@ public class DoorConnectionPort : MonoBehaviour {
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other) {
-        if(other.tag == "ConnectionPointer") _otherPort = other.gameObject.GetComponent<DoorConnectionPort>();  //TODO DANI: add check to avoid setting _otherPort to itself.
+        if (other.tag == "ConnectionPort") {
+            ValidConnectionPortEntered(other);
+        }  //TODO DANI: add check to avoid setting _otherPort to itself.
         //Other Pointer is here:
         //Flag it
         //When mouse release
@@ -161,7 +200,7 @@ public class DoorConnectionPort : MonoBehaviour {
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other) {
-        if (other.tag == "ConnectionPointer") _otherPort = null;
+        //if (other.tag == "ConnectionPort") _otherPort = null;
     }
     #endregion
 

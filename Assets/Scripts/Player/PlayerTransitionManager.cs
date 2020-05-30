@@ -147,7 +147,7 @@ public class PlayerTransitionManager : MonoBehaviour {
     /// </summary>
     public void CreateNewPathWithRegistered() {
         if (_doorEntered == null || _doorEntered.TargetDoor == null) {
-            Debug.LogError("New path has been requested by player but the door had no connection but still was opened. Something has gone wrong. Click this to see what door originated request.", _doorEntered.gameObject);
+            Debug.LogError("New path has been requested by player but the door had no connection but still was opened. Something has gone wrong. Click this to see what door originated request.");
             return;
         }   //No next door assigned.
 

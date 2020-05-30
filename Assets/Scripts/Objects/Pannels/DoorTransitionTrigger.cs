@@ -13,6 +13,7 @@ public class DoorTransitionTrigger : MonoBehaviour {
     #endregion
 
     #region Serialized Variables
+    [SerializeField] Door _doorController = null;
     #endregion
 
     #region Private Functions
@@ -23,7 +24,8 @@ public class DoorTransitionTrigger : MonoBehaviour {
 
     #region Unity Cycle
     private void OnTriggerEnter(Collider other) {
-        PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.TransitionMovement);
+        Debug.Log(other.gameObject.name, other.gameObject);
+        if(_doorController.IsOpened) PlayerStateManager.Instance.ChangeStateRequest(PlayerStateManager.PlayerState.TransitionMovement);
     }
     #endregion
 

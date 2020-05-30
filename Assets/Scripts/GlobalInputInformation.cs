@@ -56,7 +56,7 @@ public class GlobalInputInformation : MonoBehaviour {
         //currentPos.z = zValue - (_mainCamera.transform.position.z + _mainCamera.nearClipPlane);
         currentPos.z = zValue - _mainCamera.transform.position.z;
         currentPos = _mainCamera.ScreenToWorldPoint(currentPos);
-        Debug.Log("POS: " + currentPos);
+        //Debug.Log("POS: " + currentPos);
 
         return currentPos;
     }

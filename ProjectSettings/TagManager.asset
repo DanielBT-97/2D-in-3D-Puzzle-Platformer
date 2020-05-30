@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - ConnectionPointer
+  - ConnectionPort
   layers:
   - Default
   - TransparentFX
@@ -24,7 +25,7 @@ TagManager:
   - PuzzleArea
   - DoorConnector
   - 3DButton
-  - 
+  - Lines
   - 
   - 
   - 
