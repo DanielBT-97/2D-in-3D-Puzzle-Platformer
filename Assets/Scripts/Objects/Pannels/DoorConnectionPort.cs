@@ -195,12 +195,16 @@ public class DoorConnectionPort : MonoBehaviour {
         //When mouse release
     }
 
+    private void OnTriggerStay(Collider other) {
+        
+    }
+
     /// <summary>
     /// When a connection pointer exits this port we reset the value of _other port to null.
     /// </summary>
     /// <param name="other"></param>
     private void OnTriggerExit(Collider other) {
-        //if (other.tag == "ConnectionPort") _otherPort = null;
+        if (other.tag == "ConnectionPort" && !HasConnection) _otherPort = null;
     }
     #endregion
 
