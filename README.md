@@ -1,5 +1,5 @@
 # 2D in 3D Puzzle Platformer
-This is a project where I attempt to recreate the mechanic of The Pedestrian from Skookum Arts.
+This is a WIP project where I attempt to recreate the mechanic of The Pedestrian from Skookum Arts. To see code change to develop branch.
 A puzzle platformer available on Steam that has very interesting gameplay, I strongly recommend playing it:
 https://store.steampowered.com/app/466630/The_Pedestrian/
 
