@@ -687,6 +687,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1402229602}
     m_Modifications:
+    - target: {fileID: 664636650020975905, guid: d0fa044a961fd5346a00af4a33aafbf4,
+        type: 3}
+      propertyPath: _doorController
+      value: 
+      objectReference: {fileID: 1260945347}
     - target: {fileID: 664636650297728753, guid: d0fa044a961fd5346a00af4a33aafbf4,
         type: 3}
       propertyPath: m_Icon
@@ -1358,6 +1363,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000,
         type: 0}
+    - target: {fileID: 3708331764560720220, guid: 669b3afce8c1ee248a7fd567718ab98f,
+        type: 3}
+      propertyPath: _doorController
+      value: 
+      objectReference: {fileID: 155433029}
     - target: {fileID: 3708331764853665307, guid: 669b3afce8c1ee248a7fd567718ab98f,
         type: 3}
       propertyPath: m_Icon
